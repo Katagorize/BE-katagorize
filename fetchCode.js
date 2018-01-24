@@ -25,7 +25,7 @@ function fetchCode (owner, kataName) {
     .then(res => res.json())
     .then(body => {
         let code = body.data.repository.object.text
-        return writeCode(kataName, code)
+        return writeCode(owner, kataName, code)
     })
     .catch(error => console.log(error))
 }
