@@ -1,0 +1,18 @@
+DROP DATABASE
+CREATE DATABASE
+You are now connected to database "student_database" as user "jamessteele".
+CREATE TABLE
+CREATE TABLE
+INSERT 0 2
+INSERT 0 1
+ test_scores_id | test_score 
+----------------+------------
+              1 |          0
+              2 |          0
+(2 rows)
+
+ student_id |  username  | user_password 
+------------+------------+---------------
+          1 | Northcoder | password123
+(1 row)
+
