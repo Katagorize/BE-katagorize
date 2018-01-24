@@ -25,10 +25,12 @@ INSERT INTO katas (kata_name) VALUES
 ('pigLatin'), ('calculateDivisors');
 
 INSERT INTO test_scores (test_score) VALUES
-(0), (0);
+(0), (20);
 
 INSERT INTO students (username, user_password) VALUES
 ('Northcoder', 'password123');
+
+SELECT kata_id, kata_name, test_scores.test_score FROM katas JOIN test_scores ON katas.kata_id = test_scores_id;
 
 
 SELECT * FROM katas;

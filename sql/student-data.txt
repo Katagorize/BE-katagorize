@@ -7,6 +7,12 @@ CREATE TABLE
 INSERT 0 2
 INSERT 0 2
 INSERT 0 1
+ kata_id |     kata_name     | test_score 
+---------+-------------------+------------
+       1 | pigLatin          |          0
+       2 | calculateDivisors |         20
+(2 rows)
+
  kata_id |     kata_name     
 ---------+-------------------
        1 | pigLatin
@@ -16,7 +22,7 @@ INSERT 0 1
  test_scores_id | test_score 
 ----------------+------------
               1 |          0
-              2 |          0
+              2 |         20
 (2 rows)
 
  student_id |  username  | user_password 
