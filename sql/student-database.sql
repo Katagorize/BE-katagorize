@@ -37,10 +37,16 @@ INSERT INTO test_scores (test_score, kata_id, student_id) VALUES
 (0,1,1), (20,2,1), (40,1,2), (60,2,2);
 
 
+SELECT students.username, kata_name, test_scores.test_score FROM katas 
+JOIN test_scores ON katas.id = test_scores.kata_id
+JOIN students ON students.id = test_scores.student_id; 
 
 SELECT students.username, kata_name, test_scores.test_score FROM katas 
 JOIN test_scores ON katas.id = test_scores.kata_id
-JOIN students ON students.id = test_scores.student_id;
+JOIN students ON students.id = test_scores.student_id 
+WHERE students.username = 'Northcoder';
+
+
 SELECT * FROM students;
 SELECT * FROM katas;
 SELECT * FROM test_scores;
