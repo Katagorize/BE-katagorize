@@ -22,10 +22,10 @@ INSERT 0 4
  Northcoder | calculateDivisors |         60
 (2 rows)
 
- id |  username   |                        user_password                         
-----+-------------+--------------------------------------------------------------
-  1 | Northcoder1 | $2a$08$EbkwMLEjGLqgkiT7z3QDOO2/gyxGYDLQDXqsZFwbBD0rwWY3c0rrW
-  2 | Northcoder  | $2a$08$zrWEPNSpd.KuXiV4vhAiMuXtE3tUIwTL6Ak5OEx/GcXoLjmpFTR/i
+ id |  username   |                        user_password                         | user_image 
+----+-------------+--------------------------------------------------------------+------------
+  1 | Northcoder1 | $2a$08$QGWDMFAbgA8uL30UFPDWr.jZvmGryZOxcNNJhM4zp1ZnqiRLGqvpe | 
+  2 | Northcoder  | $2a$08$S02nAeKcb2j4WVL4.DjiyO3jJP3g1hUozKcu46HHty77NGNLUb7iy | 
 (2 rows)
 
  id |     kata_name     

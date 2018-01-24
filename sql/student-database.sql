@@ -5,10 +5,12 @@ CREATE DATABASE student_database;
 \c student_database;
 
 CREATE EXTENSION pgcrypto;
+
 CREATE TABLE students (
   id SERIAL PRIMARY KEY,
-  username TEXT,
-  user_password TEXT
+  username VARCHAR,
+  user_password VARCHAR,
+  user_image VARCHAR
 );
 
 CREATE TABLE katas (
