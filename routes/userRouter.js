@@ -6,4 +6,5 @@ router.get('/', getAllUsers);
 router.get('/:user_name', getSingleUser);
 router.get('/:user_name/katas/:kata_name/test', getSingleScore);
 
+
 module.exports = router;

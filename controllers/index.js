@@ -17,6 +17,7 @@ function getSingleKata () {
     console.log('getting single katas');
 }
 
+
 function getSingleScore (req, res) {
     const query = `
     query {
