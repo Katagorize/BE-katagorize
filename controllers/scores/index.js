@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 
 function getSingleScore (req, res, next) {
+    
     const owner = req.params.user_name;
     const kata = req.params.kata_name;
     const query = `
@@ -24,24 +25,21 @@ function getSingleScore (req, res, next) {
     })
     .then(res => res.json())
     .then(body => {
+    
         let code = body.data.repository.object.text
-        Promise.all([writeCodeToFile(code, owner, kata), fetchTests(kata)])
+        return Promise.all([writeCodeToFile(code, owner, kata), fetchTests(kata)])
     })
     .then(([code, test]) => {
-        console.log(code, test) 
+        // spawn child processadd .
     })
     .catch(error => console.log(error))   
 }
 
 function writeCodeToFile (code, owner, kata) {
-    fs.writeFile(`${owner}-${kata}.js`, code, (err) => {
-        if (err) console.log(err)
-        else console.log('code written')
-    })
+    return fs.writeFile(`${owner}-${kata}.js`, code, console.error)
 }
 
-function fetchTests (req, res) {
-    const kata = req.params.kata_name
+function fetchTests (kata) {
     const query = `
     query {
         repository(owner:"Katagorize", name:"kata-tests") {
@@ -69,9 +67,7 @@ function fetchTests (req, res) {
 }
 
 function writeTestToFile(kata, test) {
-    fs.writeFile(`${kata}.spec.js`, test, (err) => {
-        console.log('test written!')
-    })
+    return fs.writeFile(`${kata}.spec.js`, test, console.error)
 }
 
 module.exports = {getSingleScore, writeCodeToFile, fetchTests};
