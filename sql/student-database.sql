@@ -38,11 +38,11 @@ INSERT INTO students (username, user_password) VALUES
 INSERT INTO test_scores (test_score, kata_id, student_id) VALUES
 (0,1,1), (20,2,1), (40,1,2), (60,2,2);
 
-
+-- Get all students with kata name and score
 SELECT students.username, kata_name, test_scores.test_score FROM katas 
 JOIN test_scores ON katas.id = test_scores.kata_id
 JOIN students ON students.id = test_scores.student_id; 
-
+-- Get an individual's kata's and scores
 SELECT students.username, kata_name, test_scores.test_score FROM katas 
 JOIN test_scores ON katas.id = test_scores.kata_id
 JOIN students ON students.id = test_scores.student_id 
