@@ -1,8 +1,8 @@
-DROP DATABASE IF EXISTS student_database;
+DROP DATABASE IF EXISTS student_database_test;
 
-CREATE DATABASE student_database;
+CREATE DATABASE student_database_test;
 
-\c student_database;
+\c student_database_test;
 
 CREATE EXTENSION pgcrypto;
 
