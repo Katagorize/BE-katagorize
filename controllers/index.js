@@ -1,5 +1,6 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
+const fs = require('fs')
 
 function getAllUsers () {
     console.log('getting all users');
@@ -19,10 +20,12 @@ function getSingleKata () {
 
 
 function getSingleScore (req, res) {
+    const owner = req.params.user_name;
+    const kata = req.params.kata_name;
     const query = `
     query {
-        repository(owner:"${req.params.user_name}", name:"morning-katas") {
-            object(expression: "master:${req.params.kata_name}/${req.params.kata_name}.js") {
+        repository(owner:"${owner}", name:"morning-katas") {
+            object(expression: "master:${kata}/${kata}.js") {
                 ... on Blob {
                     text
                 }
@@ -39,10 +42,13 @@ function getSingleScore (req, res) {
     .then(res => res.json())
     .then(body => {
         let code = body.data.repository.object.text
-        console.log(code)
+        return writeCodeToFile(code, owner, kata)
     })
-    .catch(error => console.log(error))
-    
+    .catch(error => console.log(error))   
+}
+
+function writeCodeToFile (code, owner, kata) {
+    fs.writeFile(`${owner}-${kata}.js`, code, () => {'file written'})
 }
 
 module.exports = {getAllUsers, getSingleUser, getAllKatas, getSingleKata, getSingleScore};
