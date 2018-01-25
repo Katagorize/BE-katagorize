@@ -33,7 +33,7 @@ INSERT INTO katas (kata_name) VALUES
 ('pigLatin'), ('calculateDivisors');
 
 INSERT INTO students (username, user_password) VALUES
-('Northcoder1', crypt('password1', gen_salt('bf', 8))), ('Northcoder', crypt('passFSGRDword1', gen_salt('bf', 8)));
+('katagorize-student', crypt('password1', gen_salt('bf', 8))), ('Northcoder', crypt('passFSGRDword1', gen_salt('bf', 8)));
 
 INSERT INTO test_scores (test_score, kata_id, student_id) VALUES
 (0,1,1), (20,2,1), (40,1,2), (60,2,2);
