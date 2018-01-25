@@ -2,7 +2,7 @@ require('dotenv').config();
 const fetch = require('node-fetch');
 const fs = require('fs');
 
-function getSingleScore (req, res) {
+function getSingleScore (req, res, next) {
     const owner = req.params.user_name;
     const kata = req.params.kata_name;
     const query = `
@@ -25,21 +25,27 @@ function getSingleScore (req, res) {
     .then(res => res.json())
     .then(body => {
         let code = body.data.repository.object.text
-        return writeCodeToFile(code, owner, kata)
+        Promise.all([writeCodeToFile(code, owner, kata), fetchTests(kata)])
+    })
+    .then(([code, test]) => {
+        console.log(code, test) 
     })
     .catch(error => console.log(error))   
 }
 
 function writeCodeToFile (code, owner, kata) {
-    fs.writeFile(`${owner}-${kata}.js`, code, fetchTests(kata))
+    fs.writeFile(`${owner}-${kata}.js`, code, (err) => {
+        if (err) console.log(err)
+        else console.log('code written')
+    })
 }
 
-function fetchTests (kataName) {
-    console.log('fetchTests called')
+function fetchTests (req, res) {
+    const kata = req.params.kata_name
     const query = `
     query {
         repository(owner:"Katagorize", name:"kata-tests") {
-            object(expression: "master:spec/${kataName}.spec.js") {
+            object(expression: "master:spec/${kata}.spec.js") {
                 ... on Blob {
                     text
                 }
@@ -56,9 +62,16 @@ function fetchTests (kataName) {
     })
     .then(res => res.json())
     .then(body => {
-        fs.writeFile(`${kataName}.spec.js`, body.data.repository.object.text, () => {'writing of test and code complete'})
+        const test = body.data.repository.object.text
+        return writeTestToFile(kata, test)
     })
     .catch(error => console.log(error))
+}
+
+function writeTestToFile(kata, test) {
+    fs.writeFile(`${kata}.spec.js`, test, (err) => {
+        console.log('test written!')
+    })
 }
 
 module.exports = {getSingleScore, writeCodeToFile, fetchTests};

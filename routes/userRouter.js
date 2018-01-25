@@ -6,5 +6,6 @@ const  {getSingleScore, writeCodeToFile, fetchTests} = require('../controllers/s
 router.get('/', getAllUsers);
 router.get('/:user_name', getSingleUser);
 router.get('/:user_name/katas/:kata_name/test', getSingleScore);
+router.get('/:user_name/katas/:kata_name/test2', fetchTests)
 
 module.exports = router;
