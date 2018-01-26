@@ -10,8 +10,12 @@ function getAllKatas (req, res) {
     })
 }
 
-function getSingleKata () {
-    console.log('getting single katas');
+function getSingleKata (req, res) {
+    console.log(req.params, '***************');
+    db.one('SELECT kata_name FROM katas WHERE kata_name = $1;', req.params.kata_name)
+    .then((data) => {
+        res.send(data);
+    })
 }
 
 module.exports = {getAllKatas, getSingleKata};
