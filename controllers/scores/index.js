@@ -2,6 +2,10 @@ require('dotenv').config();
 const fetch = require('node-fetch');
 const fs = require('fs');
 const spawn = require('child_process').spawn
+const pgp = require('pg-promise')({promiseLib: Promise})
+const config = require('../../config').DB
+const db = pgp(config)
+
 
 function getSingleScore (req, res, next) {
     const owner = req.params.user_name;
@@ -33,23 +37,33 @@ function getSingleScore (req, res, next) {
         return fetchTests(kata)
     })
     .then(() => {
-
         const cp = spawn('npm', ['run', 'test-solution'])
         let dataCount = 0
-
-
+        let resultData;
         cp.stdout.on('data', (data) => {
             if (dataCount) {
-                res.json(JSON.parse(data.toString()))
+                resultData = JSON.parse(data.toString())
+                res.json(resultData)           
+                fs.writeFile(`./data/results/${owner}.${kata}result.json`, data, () => console.log('Results written'))
             }
             dataCount++
-            fs.writeFile(`./data/results/${owner}.${kata}result.json`, data, () => console.log('Results written'))
         })
-
+        
         cp.on('close', () => {
-            process.exit()
+            let studentId;
+            db.one('SELECT id FROM students WHERE username = $1;', owner)
+            .then(stud => {
+                studentId = stud.id;
+                return db.one('SELECT id FROM katas WHERE kata_name = $1;', kata)
+            })
+            .then(kata => {
+                return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [resultData.stats.passes, kata.id, studentId])
+            })
+            .then(data => {
+                process.exit()
+            })
+            .catch(err => console.log(err))
         })
-
     })
     .catch(error => console.log(error))   
 }
