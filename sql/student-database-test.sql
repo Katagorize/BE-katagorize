@@ -37,7 +37,7 @@ INSERT INTO students (username, user_password) VALUES
 ('katagorize-student', crypt('password1', gen_salt('bf', 8))), ('Christopher-Peers', crypt('passFSGRDword1', gen_salt('bf', 8)));
 
 INSERT INTO test_scores (test_score, kata_id, student_id) VALUES
-(0,1,1), (20,2,1), (40,1,2), (60,2,2);
+(0,1,1), (20,2,1), (40,1,2), (60,2,2), (20,1,1), (40,1,1), (30,2,1), (60,2,1);
 
 -- Get all students with kata name and score
 SELECT students.username, kata_name, test_scores.test_score FROM katas 
