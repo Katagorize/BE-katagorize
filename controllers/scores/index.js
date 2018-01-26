@@ -60,6 +60,7 @@ function getSingleScore (req, res, next) {
                 return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [resultData.stats.passes, kata.id, studentId])
             })
             .then(data => {
+                console.log(data)
                 process.exit()
             })
             .catch(err => console.log(err))

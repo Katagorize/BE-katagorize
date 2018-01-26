@@ -9,7 +9,7 @@ CREATE EXTENSION pgcrypto;
 CREATE TABLE students (
   id SERIAL PRIMARY KEY,
   username VARCHAR,
-  user_password VARCHAR,
+  user_password VARCHAR NOT NULL,
   user_image VARCHAR
 );
 
@@ -23,6 +23,7 @@ CREATE TABLE test_scores (
   test_score INT NOT NULL,
   kata_id INT NOT NULL,
   student_id INT NOT NULL,
+  test_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (kata_id) REFERENCES katas(id),
   FOREIGN KEY (student_id) REFERENCES students(id)
 );
@@ -33,7 +34,7 @@ INSERT INTO katas (kata_name) VALUES
 ('pigLatin'), ('calculateDivisors');
 
 INSERT INTO students (username, user_password) VALUES
-('Northcoder1', crypt('password1', gen_salt('bf', 8))), ('Northcoder', crypt('passFSGRDword1', gen_salt('bf', 8)));
+('katagorize-student', crypt('password1', gen_salt('bf', 8))), ('Christopher-Peers', crypt('passFSGRDword1', gen_salt('bf', 8)));
 
 INSERT INTO test_scores (test_score, kata_id, student_id) VALUES
 (0,1,1), (20,2,1), (40,1,2), (60,2,2);
@@ -46,7 +47,7 @@ JOIN students ON students.id = test_scores.student_id;
 SELECT students.username, kata_name, test_scores.test_score FROM katas 
 JOIN test_scores ON katas.id = test_scores.kata_id
 JOIN students ON students.id = test_scores.student_id 
-WHERE students.username = 'Northcoder';
+WHERE students.username = 'Christopher-Peers';
 
 
 SELECT * FROM students;
