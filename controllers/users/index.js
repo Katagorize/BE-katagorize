@@ -31,8 +31,13 @@ function getAllUsers(req, res) {
         .then(data => res.send(data))
 }
 
-function getSingleUser() {
-    console.log('getting single user');
-}
+function getSingleUser (req, res) {
+    console.log(req.params, '***************');
+    db.one('SELECT username, user_image FROM students WHERE username = $1;', req.params.user_name)
+    .then((data) => {
+        res.send(data);
+    })
+};
+
 
 module.exports = { getAllUsers, getSingleUser };
