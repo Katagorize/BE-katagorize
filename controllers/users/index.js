@@ -1,10 +1,34 @@
-const pgp = require('pg-promise')({promiseLib: Promise})
+const pgp = require('pg-promise')({ promiseLib: Promise })
 const config = require('../../config').DB
 const db = pgp(config)
 
+function getAllUsers(req, res) {
 
-function getAllUsers () {
-    console.log('getting all users');
+    db.many(`SELECT students.username, kata_name, test_scores.test_score, test_scores.test_date FROM katas 
+        JOIN test_scores ON katas.id = test_scores.kata_id
+        JOIN students ON students.id = test_scores.student_id;`)
+        .then(allUsers => {
+            let result = {};
+            allUsers.map((el, i) => {
+
+                if (Object.keys(result).includes(el.username)) {
+                    if(Object.keys(result[el.username]).includes(el.kata_name)) {
+                        result[el.username][el.kata_name].push(`${el.test_date} score: ${el.test_score}`);
+                    }
+                    else {
+                        result[el.username][el.kata_name] = [`${el.test_date} score: ${el.test_score}`];
+                    }
+
+                }
+                else {
+                    let date = el.test_date;
+                    result[el.username] = {}
+                    result[el.username][el.kata_name] = [`${el.test_date} score: ${el.test_score}`];
+                }
+            })
+            return result;
+        })
+        .then(data => res.send(data))
 }
 
 function getSingleUser (req, res) {
@@ -13,6 +37,7 @@ function getSingleUser (req, res) {
     .then((data) => {
         res.send(data);
     })
-}
+};
 
-module.exports = {getAllUsers, getSingleUser};
+
+module.exports = { getAllUsers, getSingleUser };
