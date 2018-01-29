@@ -41,10 +41,11 @@ function getSingleUser(req, res) {
 function addUser(req, res) {
   db.any('SELECT * FROM students WHERE username = $1;', [req.params.user_name])
     .then((student) => {
-      if (student.length > 0) res.send('user already exists')
+      if (student.length > 0) res.json('user already exists')
       else {
         db.one('INSERT INTO students (username, user_password, user_image) VALUES ($1, crypt($2, gen_salt(\'bf\', 8)), $3) RETURNING *;', [req.params.user_name, req.body.password, req.body.user_image])
           .then((data) => {
+            console.log(data)
             res.send(data);
           });
       }
