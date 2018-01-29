@@ -70,6 +70,7 @@ function getSingleScore (req, res, next) {
             })
             .then(data => {
                 cp.kill()
+
             })
             .catch(err => console.log(err))
         })
