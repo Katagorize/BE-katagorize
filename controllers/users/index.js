@@ -12,7 +12,7 @@ function getAllUsers(req, res) {
       allUsers.map((el) => {
 
         if (Object.keys(result).includes(el.username)) {
-          if(Object.keys(result[el.username]).includes(el.kata_name)) {
+          if (Object.keys(result[el.username]).includes(el.kata_name)) {
             result[el.username][el.kata_name].push(`${el.test_date} score: ${el.test_score}`);
           }
           else {
@@ -31,21 +31,29 @@ function getAllUsers(req, res) {
     .then(data => res.send(data));
 }
 
-function getSingleUser (req, res) {
+function getSingleUser(req, res) {
   db.one('SELECT username, user_image FROM students WHERE username = $1;', req.params.user_name)
     .then((data) => {
       res.send(data);
     });
 }
 
-function addUser (req, res) {
-  db.one('INSERT INTO students (username, user_password, user_image) VALUES ($1, crypt($2, gen_salt(\'bf\', 8)), $3) RETURNING *;', [req.params.user_name, req.body.password, req.body.user_image])
-    .then((data) => {
-      res.send(data);
-    });
+function addUser(req, res) {
+  db.any('SELECT * FROM students WHERE username = $1;', [req.params.user_name])
+    .then((student) => {
+      if (student.length > 0) res.send('user already exists')
+      else {
+        db.one('INSERT INTO students (username, user_password, user_image) VALUES ($1, crypt($2, gen_salt(\'bf\', 8)), $3) RETURNING *;', [req.params.user_name, req.body.password, req.body.user_image])
+          .then((data) => {
+            res.send(data);
+          });
+      }
+    })
+    .catch(error => console.log(error))
+
 }
 
-function userLogin (req, res) {
+function userLogin(req, res) {
   db.one('SELECT * FROM students WHERE username=$1 AND user_password = crypt($2, user_password)', [req.params.user_name, req.headers.authorization])
     .then((data) => {
       res.send(data);
