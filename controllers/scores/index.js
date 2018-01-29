@@ -20,6 +20,7 @@ function getSingleScore (req, res, next) {
             }
         }
     }`
+
     return fetch('https://api.github.com/graphql', {
         method: "POST",
         body: JSON.stringify({ query }),
@@ -27,8 +28,15 @@ function getSingleScore (req, res, next) {
             'Authorization': `Bearer ${process.env.accessToken}`
         }
     })
-    .then(res => res.json())
+    .then(res => {
+       return res.json()})
     .then(body => {
+        
+        const message = 'Kata not found'
+        if (body.data.repository.object === null) {
+            res.status(404).send({message})
+        }
+
         let code = body.data.repository.object.text
 
         return fs.writeFile(`./data/${kata}.js`, code, () => console.log('Solution written'))
@@ -40,6 +48,7 @@ function getSingleScore (req, res, next) {
         const cp = spawn('npm', ['run', 'test-solution'])
         let dataCount = 0
         let resultData;
+
         cp.stdout.on('data', (data) => {
             if (dataCount) {
                 resultData = JSON.parse(data.toString())
@@ -60,8 +69,8 @@ function getSingleScore (req, res, next) {
                 return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [resultData.stats.passes, kata.id, studentId])
             })
             .then(data => {
-                console.log(data)
-                process.exit()
+                cp.kill()
+
             })
             .catch(err => console.log(err))
         })

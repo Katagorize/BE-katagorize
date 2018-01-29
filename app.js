@@ -10,3 +10,5 @@ app.use(morgan('dev'))
 app.use('/api', apiRouter);
 
 app.listen(PORT, () => {console.log(`listening on ${PORT}...`)});
+
+module.exports = app;
