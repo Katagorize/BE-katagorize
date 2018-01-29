@@ -1,6 +1,7 @@
 const pgp = require('pg-promise')({ promiseLib: Promise });
 const config = require('../../config').DB;
 const db = pgp(config);
+const _ = require('lodash');
 
 function getAllUsers(req, res) {
 
@@ -32,16 +33,19 @@ function getAllUsers(req, res) {
 }
 
 function getSingleUser(req, res) {
-  db.one('SELECT username, user_image FROM students WHERE username = $1;', req.params.user_name)
-    .then((data) => {
-      res.send(data);
-    });
+  db.many(`SELECT students.username, kata_name FROM katas 
+        JOIN test_scores ON katas.id = test_scores.kata_id
+        JOIN students ON students.id = test_scores.student_id WHERE students.username = $1;`, req.params.user_name)
+    .then((singleStudent) => {
+      return _.uniqWith(singleStudent, _.isEqual);
+    })
+    .then(katas => res.send(katas));
 }
 
 function addUser(req, res) {
   db.any('SELECT * FROM students WHERE username = $1;', [req.params.user_name])
     .then((student) => {
-      if (student.length > 0) res.json('user already exists')
+      if (student.length > 0) res.json('user already exists');
       else {
         db.one('INSERT INTO students (username, user_password, user_image) VALUES ($1, crypt($2, gen_salt(\'bf\', 8)), $3) RETURNING *;', [req.params.user_name, req.body.password, req.body.user_image])
           .then((data) => {
