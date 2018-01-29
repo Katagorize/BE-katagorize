@@ -4,7 +4,7 @@
   "description": "Backend of katagorize",
   "main": "index.js",
   "scripts": {
-    "test": "psql -f sql/student-database-test.sql && mocha spec/*.spec.js",
+    "test": "psql -f sql/student-database-test.sql && mocha spec/*.spec.js --exit",
     "dev": "nodemon app.js",
     "test-solution": "mocha --reporter json data/spec/*.spec.js"
   },

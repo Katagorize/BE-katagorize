@@ -29,15 +29,12 @@ function getSingleScore (req, res, next) {
         }
     })
     .then(res => {
-    console.log('oxoxooxoxoxoxooxoxoxoxox')        
        return res.json()})
     .then(body => {
         
-        console.log(`Here is my body : ${body}`);
         const message = 'Kata not found'
         if (body.data.repository.object === null) {
             res.status(404).send({message})
-            return Promise.reject({message: 'all good!'})
         }
 
         let code = body.data.repository.object.text
@@ -72,7 +69,7 @@ function getSingleScore (req, res, next) {
                 return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [resultData.stats.passes, kata.id, studentId])
             })
             .then(data => {
-                process.exit()
+                cp.kill()
             })
             .catch(err => console.log(err))
         })
