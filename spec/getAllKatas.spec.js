@@ -3,7 +3,7 @@ const {expect} = require('chai');
 const app = require('../app');
 const request = require('supertest')(app);
 
-describe.only('getAllKatas', () => {
+describe('getAllKatas', () => {
   it('retuns an array of all katas', () => {
     return request
       .get('/api/katas')
