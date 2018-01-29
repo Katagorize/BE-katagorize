@@ -45,4 +45,12 @@ function addUser (req, res) {
     });
 }
 
-module.exports = { getAllUsers, getSingleUser, addUser };
+function userLogin (req, res) {
+  db.one('SELECT * FROM students WHERE username=$1 AND user_password = crypt($2, user_password)', [req.params.user_name, req.headers.authorization])
+    .then((data) => {
+      res.send(data);
+    })
+    .catch(error => console.log(error));
+}
+
+module.exports = { getAllUsers, getSingleUser, addUser, userLogin };
