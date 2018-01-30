@@ -60,7 +60,7 @@ function getSingleScore (req, res) {
         
       cp.on('close', () => {
         let studentId;
-        db.one('SELECT id FROM students WHERE username = $1;', owner)
+        return db.one('SELECT id FROM students WHERE username = $1;', owner)
           .then(stud => {
             studentId = stud.id;
             return db.one('SELECT id FROM katas WHERE kata_name = $1;', kata);
@@ -70,6 +70,21 @@ function getSingleScore (req, res) {
             return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [percentage, kata.id, studentId]);
           })
           .then(() => {
+            fs.unlink(`./data/${kata}.js`, (err) => {
+              if (err) console.log(err);
+              else {
+                fs.unlink(`./data/spec/${kata}.spec.js`, (err) => {
+                  if (err) console.log(err); 
+                  else {
+                    fs.unlink(`./data/results/${owner}.${kata}result.json`, (err) => {
+                      if (err) console.log(err);
+                      else console.log('deleted!');
+                    });
+                  }
+                });
+              }
+            });
+
             cp.kill();
 
           })
