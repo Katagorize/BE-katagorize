@@ -66,7 +66,8 @@ function getSingleScore (req, res) {
             return db.one('SELECT id FROM katas WHERE kata_name = $1;', kata);
           })
           .then(kata => {
-            return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [resultData.stats.passes, kata.id, studentId]);
+            let percentage = Math.ceil(100 * (resultData.stats.passes / resultData.stats.tests));
+            return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [percentage, kata.id, studentId]);
           })
           .then(() => {
             cp.kill();

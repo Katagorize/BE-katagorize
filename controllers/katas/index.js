@@ -4,7 +4,7 @@ const db = pgp(config);
 
 
 function getAllKatas (req, res) {
-  db.many('SELECT kata_name FROM katas;')
+  db.many('SELECT kata_name, release_date FROM katas;')
     .then((data) => {
       res.send(data);
     });
