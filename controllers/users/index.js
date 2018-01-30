@@ -9,7 +9,6 @@ function getAllUsers(req, res) {
         JOIN test_scores ON katas.id = test_scores.kata_id
         JOIN students ON students.id = test_scores.student_id;`)
     .then(allUsers => {
-      console.log(allUsers);
       let result = {};
       allUsers.map((el) => {
 
