@@ -24,6 +24,7 @@
     "aws-sdk": "^2.186.0",
     "body-parser": "^1.18.2",
     "child_process": "^1.0.2",
+    "cors": "^2.8.4",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
     "lodash": "^4.17.4",
