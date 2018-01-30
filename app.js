@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 app.use(cors());
-app.use(morgan('dev'));
+app.use(morgan('combined'));
 app.use(bodyParser.json());
 
 app.use('/api', apiRouter);
