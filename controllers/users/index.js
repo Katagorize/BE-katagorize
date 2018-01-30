@@ -9,6 +9,7 @@ function getAllUsers(req, res) {
         JOIN test_scores ON katas.id = test_scores.kata_id
         JOIN students ON students.id = test_scores.student_id;`)
     .then(allUsers => {
+      console.log(allUsers);
       let result = {};
       allUsers.map((el) => {
 
@@ -43,19 +44,19 @@ function getSingleUser(req, res) {
 }
 
 function addUser(req, res) {
-  db.any('SELECT * FROM students WHERE username = $1;', [req.params.user_name])
+  const user = req.params.user_name;
+  db.any('SELECT * FROM students WHERE username = $1;', user)
     .then((student) => {
       if (student.length > 0) res.json('user already exists');
       else {
-        db.one('INSERT INTO students (username, user_password, user_image) VALUES ($1, crypt($2, gen_salt(\'bf\', 8)), $3) RETURNING *;', [req.params.user_name, req.body.password, req.body.user_image])
-          .then((data) => {
-            console.log(data)
-            res.send(data);
-          });
+        return db.one('INSERT INTO students (username, user_password, user_image) VALUES ($1, crypt($2, gen_salt(\'bf\', 8)), $3) RETURNING *;', [req.params.user_name, req.body.password, req.body.user_image])
       }
     })
+    .then((data) => {
+      return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES (0,1,$1) RETURNING *;', data.id)
+    })
+    .then(data => res.send(data))
     .catch(error => console.log(error))
-
 }
 
 function userLogin(req, res) {
