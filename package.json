@@ -6,7 +6,8 @@
   "scripts": {
     "test": "psql -f sql/student-database-test.sql && mocha spec/*.spec.js --exit",
     "dev": "nodemon app.js",
-    "test-solution": "mocha --reporter json data/spec/*.spec.js"
+    "test-solution": "mocha --reporter json data/spec/*.spec.js",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
