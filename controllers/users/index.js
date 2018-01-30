@@ -1,6 +1,8 @@
 const pgp = require('pg-promise')({ promiseLib: Promise });
 const config = require('../../config').DB;
 const db = pgp(config);
+const _ = require('lodash');
+const fetch = require('node-fetch');
 
 function getAllUsers(req, res) {
 
@@ -8,6 +10,7 @@ function getAllUsers(req, res) {
         JOIN test_scores ON katas.id = test_scores.kata_id
         JOIN students ON students.id = test_scores.student_id;`)
     .then(allUsers => {
+      console.log(allUsers);
       let result = {};
       allUsers.map((el) => {
 
@@ -32,24 +35,49 @@ function getAllUsers(req, res) {
 }
 
 function getSingleUser(req, res) {
-  db.one('SELECT username, user_image FROM students WHERE username = $1;', req.params.user_name)
-    .then((data) => {
-      res.send(data);
+  const query = `query {
+  repository(name: "morning-katas", owner:"${req.params.user_name}") {
+    object(expression: "master:") {
+    ... on Tree{
+      entries{
+        name
+        type
+      }
+    }
+  }
+  }
+}`;
+
+  return fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    body: JSON.stringify({ query }),
+    headers: {
+      'Authorization': `Bearer ${process.env.accessToken}`
+    }
+  })
+    .then(res => res.json())
+    .then(files => {
+      const katas = files.data.repository.object.entries.filter((file) => {
+        return file.type === 'tree';
+      })
+      
+      res.send({katas})
     });
 }
 
 function addUser(req, res) {
-  console.log(req.params.user_name, req.body.password, req.body.user_image)
-  db.any('SELECT * FROM students WHERE username = $1;', [req.params.user_name])
+  const user = req.params.user_name;
+  db.any('SELECT * FROM students WHERE username = $1;', user)
     .then((student) => {
       if (student.length > 0) res.json('user already exists');
       else {
-        db.one('INSERT INTO students (username, user_password, user_image) VALUES ($1, crypt($2, gen_salt(\'bf\', 8)), $3) RETURNING *;', [req.params.user_name, req.body.password, req.body.user_image])
-          .then((data) => {
-            res.send(data);
-          });
+        return db.one('INSERT INTO students (username, user_password, user_image) VALUES ($1, crypt($2, gen_salt(\'bf\', 8)), $3) RETURNING *;', [req.params.user_name, req.body.password, req.body.user_image])
       }
     })
+    .then((data) => {
+      return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES (0,1,$1) RETURNING *;', data.id)
+    })
+    .then(data => res.send(data))
     .catch(error => console.log(error))
 
 }

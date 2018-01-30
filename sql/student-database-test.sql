@@ -15,7 +15,8 @@ CREATE TABLE students (
 
 CREATE TABLE katas (
   id SERIAL PRIMARY KEY,
-  kata_name VARCHAR
+  kata_name VARCHAR,
+  release_date DATE
 );
 
 CREATE TABLE test_scores (
@@ -30,8 +31,8 @@ CREATE TABLE test_scores (
 
 
 
-INSERT INTO katas (kata_name) VALUES
-('pigLatin'), ('calculateDivisors');
+INSERT INTO katas (kata_name, release_date) VALUES
+('pigLatin', '2018-01-01'), ('calculateDivisors', '2018-01-02');
 
 INSERT INTO students (username, user_password) VALUES
 ('katagorize-student', crypt('password1', gen_salt('bf', 8))), ('Christopher-Peers', crypt('passFSGRDword1', gen_salt('bf', 8)));
