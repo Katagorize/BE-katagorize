@@ -1,3 +1,5 @@
+console.log(process.env.PORT, 'THIS IS MY PORT')
+
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = require('./config').PORT;
 const express = require('express');
