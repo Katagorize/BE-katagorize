@@ -15,7 +15,8 @@ CREATE TABLE students (
 
 CREATE TABLE katas (
   id SERIAL PRIMARY KEY,
-  kata_name VARCHAR
+  kata_name VARCHAR,
+  release_date DATE
 );
 
 CREATE TABLE test_scores (
