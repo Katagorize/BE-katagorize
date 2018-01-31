@@ -1,7 +1,6 @@
 const pgp = require('pg-promise')({ promiseLib: Promise });
 const config = require('../../config').DB;
 const db = pgp(config);
-const _ = require('lodash');
 const fetch = require('node-fetch');
 
 function getAllUsers(req, res) {
@@ -10,7 +9,6 @@ function getAllUsers(req, res) {
         JOIN test_scores ON katas.id = test_scores.kata_id
         JOIN students ON students.id = test_scores.student_id;`)
     .then(allUsers => {
-      console.log(allUsers);
       let result = {};
       allUsers.map((el) => {
 
@@ -60,7 +58,6 @@ function getSingleUser(req, res) {
       const katas = files.data.repository.object.entries.filter((file) => {
         return file.type === 'tree';
       })
-      
       res.send({katas})
     });
 }
