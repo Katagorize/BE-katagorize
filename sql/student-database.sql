@@ -32,7 +32,7 @@ CREATE TABLE test_scores (
 
 
 INSERT INTO katas (kata_name) VALUES
-('pigLatin'), ('calculateDivisors');
+('pigLatin', '01-01-2018'), ('calculateDivisors', '01-02-2018'), ('dnaPairs', '01-03-2018'), ('findMostRepeated', '01-04-2018'), ('foldStrings', '01-05-2018'), ('getTweetData', '01-08-2018'), ('needleInHaystack', '01-08-2018'), ('rotateMatrix', '01-09-2018'), ('textInDiv', '01-10-2018'), ('wrongWayCow', '01-11-2018')
 
 INSERT INTO students (username, user_password) VALUES
 ('katagorize-student', crypt('password1', gen_salt('bf', 8))), ('Christopher-Peers', crypt('passFSGRDword1', gen_salt('bf', 8)));
