@@ -32,13 +32,13 @@ CREATE TABLE test_scores (
 
 
 INSERT INTO katas (kata_name, release_date) VALUES
-('pigLatin', '2018-01-01'), ('calculateDivisors', '2018-01-02');
+('pigLatin', '2018-01-01'), ('calculateDivisors', '2018-01-02'), ('foldStrings', '01-05-2018');
 
 INSERT INTO students (username, user_password) VALUES
-('katagorize-student', crypt('password1', gen_salt('bf', 8))), ('Christopher-Peers', crypt('passFSGRDword1', gen_salt('bf', 8)));
+('katagorize-student', crypt('password1', gen_salt('bf', 8))), ('Christopher-Peers', crypt('passFSGRDword1', gen_salt('bf', 8))), ('jdunsby', crypt('passFSGRDword1', gen_salt('bf', 8)));
 
 INSERT INTO test_scores (test_score, kata_id, student_id) VALUES
-(0,1,1), (20,2,1), (40,1,2), (60,2,2), (20,1,1), (40,1,1), (30,2,1), (60,2,1);
+(0,1,1), (20,2,1), (40,1,2), (60,2,2), (20,1,1), (40,1,1), (30,2,1), (60,2,1), (0,1,3);
 
 -- Get all students with kata name and score
 SELECT students.username, kata_name, test_scores.test_score FROM katas 

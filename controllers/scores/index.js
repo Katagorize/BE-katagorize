@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const fs = require('fs');
-const spawn = require('child_process').spawn;
+const {spawn, exec} = require('child_process');
 const pgp = require('pg-promise')({promiseLib: Promise});
 const config = require('../../config').DB;
 const db = pgp(config);
@@ -31,7 +31,6 @@ function getSingleScore (req, res) {
     .then(res => {
       return res.json();})
     .then(body => {
-        
       const message = 'Kata not found';
       if (body.data.repository.object === null) {
         res.status(404).send({message});
@@ -45,51 +44,65 @@ function getSingleScore (req, res) {
       return fetchTests(kata);
     })
     .then(() => {
-      const cp = spawn('npm', ['run', 'test-solution']);
-      let dataCount = 0;
-      let resultData;
-
-      cp.stdout.on('data', (data) => {
-        if (dataCount) {
-          resultData = JSON.parse(data.toString());
-          res.json(resultData);           
-          fs.writeFile(`./data/results/${owner}.${kata}result.json`, data, () => console.log('Results written'));
+      exec(`mocha --reporter json data/spec/${kata}.spec.js`, {encoding: 'utf8', timeout:10000,  maxBuffer: 500 * 1024,  killSignal: 'SIGTERM'}, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`exec error: ${err}`);
+          return;
         }
-        dataCount++;
+        else {
+          return fs.writeFile(`./data/results/${owner}.${kata}result.json`, stdout, () => {
+            console.log('Results written')
+          });
+        }
       });
+      // const cp = spawn('mocha', [' --reporter', 'json', 'data/spec/*.spec.js']);
+      // let dataCount = 0;
+      // let resultData;
+
+      // cp.stdout.setEncoding('utf8')
+      // cp.stdout.on('data', (data) => {
+      //   console.log('getting data')
+      //   if (dataCount) {
+      //     resultData = JSON.parse(data.toString());
+      //     res.json(resultData);           
+      //     fs.writeFile(`./data/results/${owner}.${kata}result.json`, data, () => console.log('Results written'));
+      //   }
+      //   dataCount++;
+      // });
         
-      cp.on('close', () => {
-        let studentId;
-        return db.one('SELECT id FROM students WHERE username = $1;', owner)
-          .then(stud => {
-            studentId = stud.id;
-            return db.one('SELECT id FROM katas WHERE kata_name = $1;', kata);
-          })
-          .then(kata => {
-            let percentage = Math.ceil(100 * (resultData.stats.passes / resultData.stats.tests));
-            return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [percentage, kata.id, studentId]);
-          })
-          .then(() => {
-            fs.unlink(`./data/${kata}.js`, (err) => {
-              if (err) console.log(err);
-              else {
-                fs.unlink(`./data/spec/${kata}.spec.js`, (err) => {
-                  if (err) console.log(err); 
-                  else {
-                    fs.unlink(`./data/results/${owner}.${kata}result.json`, (err) => {
-                      if (err) console.log(err);
-                      else console.log('deleted!');
-                    });
-                  }
-                });
-              }
-            });
+      // cp.on('close', () => {
+      //   console.log('closing');
+      //   let studentId;
+      //   return db.one('SELECT id FROM students WHERE username = $1;', owner)
+      //     .then(stud => {
+      //       studentId = stud.id;
+      //       return db.one('SELECT id FROM katas WHERE kata_name = $1;', kata);
+      //     })
+      //     .then(kata => {
+      //       let percentage = Math.ceil(100 * (resultData.stats.passes / resultData.stats.tests));
+      //       return db.one('INSERT INTO test_scores (test_score, kata_id, student_id) VALUES ($1, $2, $3) RETURNING *;', [percentage, kata.id, studentId]);
+      //     })
+      //     .then(() => {
+      //       fs.unlink(`./data/${kata}.js`, (err) => {
+      //         if (err) console.log(err);
+      //         else {
+      //           fs.unlink(`./data/spec/${kata}.spec.js`, (err) => {
+      //             if (err) console.log(err); 
+      //             else {
+      //               fs.unlink(`./data/results/${owner}.${kata}result.json`, (err) => {
+      //                 if (err) console.log(err);
+      //                 else console.log('deleted!');
+      //               });
+      //             }
+      //           });
+      //         }
+      //       });
 
-            cp.kill();
+      //       cp.kill();
 
-          })
-          .catch(err => console.log(err));
-      });
+          // })
+      //     .catch(err => console.log(err));
+      // });
     })
     .catch(error => console.log(error));   
 }
